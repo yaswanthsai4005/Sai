@@ -5,8 +5,9 @@ import os
 
 app = Flask(__name__)
 
-# MongoDB configuration
-app.config["MONGO_URI"] = "mongodb://localhost:27017/portfolio_db"
+# Get MongoDB URI from environment variable
+mongo_uri = os.environ.get('MONGO_URI', 'mongodb://localhost:27017/portfolio_db')
+app.config["MONGO_URI"] = mongo_uri
 mongo = PyMongo(app)
 
 # Root route to serve portfolio
@@ -42,5 +43,7 @@ def submit_contact():
             'message': 'Failed to send message. Please try again.'
         }), 500
 
+# Only run directly in development mode
 if __name__ == '__main__':
-    app.run(debug=True)
+    if os.environ.get('FLASK_ENV') == 'development':
+        app.run(debug=True)
